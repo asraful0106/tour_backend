@@ -2,7 +2,7 @@ import httpStatusCode from 'http-status-codes';
 import { NextFunction, Request, Response } from "express";
 import { catchAsync } from "../../util/catchAsync";
 import { sendResposne } from "../../util/sendResponse";
-import { userService } from './userService';
+import { userService } from './user.service';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const createUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
