@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/asraful0106/tour_backend#readme",
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^17.1.0",
     "express": "^5.1.0",
