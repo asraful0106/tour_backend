@@ -16,6 +16,21 @@ const createUser = catchAsync(async (req: Request, res: Response, next: NextFunc
 });
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
+const updateUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.params.id;
+    const verifiedToken = req.user;
+    const payload  = req.body;
+    const user = await userService.updateUser(userId, payload, verifiedToken);
+
+    sendResposne(res, {
+        success: true, 
+        statusCode: httpStatusCode.CREATED,
+        message: "User Updated Successfully",
+        data: user
+    });
+})
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getAllUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const users = await userService.getAllUser();
     sendResposne(res, {
@@ -29,5 +44,6 @@ const getAllUser = catchAsync(async (req: Request, res: Response, next: NextFunc
 
 export const userController = {
     createUser,
+    updateUser,
     getAllUser
 }
