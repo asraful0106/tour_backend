@@ -3,8 +3,7 @@ import AppError from "../../errorHelpers/AppError";
 import { IUser } from "../user/user.interface";
 import { User } from "../user/user.model";
 import bcryptjs from "bcryptjs";
-import { generateToken } from '../../util/jwt';
-import { envVars } from '../../config/env';
+import { createNewAccessTokenWithRefreshToken, createUserTokens } from '../../util/userTokens';
 
 const credentialsLogin = async (payload: Partial<IUser>) => {
     const { email, password } = payload;
@@ -22,16 +21,28 @@ const credentialsLogin = async (payload: Partial<IUser>) => {
     }
 
 
-    const JwtPayload = {
-        userId: isUserExist._id,
-        email: isUserExist.email,
-        role: isUserExist.role
+    const userToken = createUserTokens(isUserExist);
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: pass, ...rest } = isUserExist.toObject();
+
+    return {
+        accessToken: userToken.accessToken,
+        refreshToken: userToken.refreshToken,
+        user: rest
     }
-    const accessToken = generateToken(JwtPayload, envVars.JWT_SECRET, envVars.JWT_ACCESS_EXPIRES);
-    return { accessToken };
+}
+
+const getNewAccessToken = async (refreshToken: string) =>{
+    const newAccessToken = await createNewAccessTokenWithRefreshToken(refreshToken);
+
+    return {
+        accessToken: newAccessToken
+    }
 }
 
 
 export const AuthServices = {
-    credentialsLogin
+    credentialsLogin,
+    getNewAccessToken
 }

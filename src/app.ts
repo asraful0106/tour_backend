@@ -3,9 +3,12 @@ import cors from 'cors';
 import router from './app/routes';
 import { globalErrorHandler } from './app/middlewares/globalErrorHandler';
 import notFound from './app/middlewares/notFound';
+import cookieParser from 'cookie-parser';
 
 const app: Application = express();
 
+// For accessing the cookie
+app.use(cookieParser());
 // For json data
 app.use(express.json());
 // For url encoded data
