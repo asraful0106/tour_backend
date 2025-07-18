@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { catchAsync } from "../../util/catchAsync";
 import { AuthServices } from "./auth.service";
 import { sendResposne } from "../../util/sendResponse";
-import { setAuthCookie } from '../../util/manageCookies';
+import { clearCookies, setAuthCookie } from '../../util/manageCookies';
 import AppError from '../../errorHelpers/AppError';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -39,9 +39,21 @@ const getNewAccessToken = catchAsync(async (req: Request, res: Response, next: N
         message: "New Acess Token Retrived Successfuly.",
         data: tokenInfo
     });
+});
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const logout = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    clearCookies(res, ['accessToken', 'refreshToken']);
+    sendResposne(res, {
+        success: true,
+        statusCode: httpStatusCode.OK,
+        message: "User Logged Out Successfuly.",
+        data: null
+    });
 })
 
 export const AuthControllers = {
     credentialsLogin,
-    getNewAccessToken
+    getNewAccessToken,
+    logout
 }

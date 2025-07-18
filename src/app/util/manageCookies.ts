@@ -20,3 +20,13 @@ export const setAuthCookie = (res: Response, tokenInfo: AuthTokens) => {
         });
     }
 }
+
+export const clearCookies = (res: Response, cookiesName: string[]) => {
+    cookiesName.forEach((cookieName) => {
+        res.clearCookie(cookieName, {
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax"
+        });
+    });
+}
