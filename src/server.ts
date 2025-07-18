@@ -3,6 +3,7 @@ import { Server } from 'http';
 import app from "./app";
 import { envVars } from "./app/config/env";
 import connectToDb from "./app/database/db";
+import { seedSuperAdmin } from './app/util/seedSuperAdmin';
 
 let server: Server;
 
@@ -15,7 +16,12 @@ const startServer = async() => {
     }
 }
 
-startServer();
+
+(async () => {
+    await startServer();
+    await seedSuperAdmin();
+})();
+
 
 process.on("unhandledRejection", (err) => {
     console.log("Unhandled Rejection detected.... Server shuting down!", err);
