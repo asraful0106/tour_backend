@@ -18,3 +18,5 @@ authRouter.get("/google", async (req: Request, res: Response, next: NextFunction
 authRouter.get("/google/callback", passport.authenticate("google", { failureRedirect: "/login" }), AuthControllers.googleCallbackController);
 
 export default authRouter;
+
+// Google oAuth with manual password
