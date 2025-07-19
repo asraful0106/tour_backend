@@ -4,8 +4,20 @@ import router from './app/routes';
 import { globalErrorHandler } from './app/middlewares/globalErrorHandler';
 import notFound from './app/middlewares/notFound';
 import cookieParser from 'cookie-parser';
+import expressSession from 'express-session';
+import { envVars } from './app/config/env';
+import passport from 'passport';
 
 const app: Application = express();
+
+// For Google oAuth authentication
+app.use(expressSession({
+    secret: envVars.EXPRESS_SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 // For accessing the cookie
 app.use(cookieParser());

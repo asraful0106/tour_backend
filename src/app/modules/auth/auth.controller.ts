@@ -5,6 +5,9 @@ import { AuthServices } from "./auth.service";
 import { sendResposne } from "../../util/sendResponse";
 import { clearCookies, setAuthCookie } from '../../util/manageCookies';
 import AppError from '../../errorHelpers/AppError';
+import { createUserTokens } from '../../util/userTokens';
+import { envVars } from '../../config/env';
+import { JwtPayload } from 'jsonwebtoken';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const credentialsLogin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -50,10 +53,42 @@ const logout = catchAsync(async (req: Request, res: Response, next: NextFunction
         message: "User Logged Out Successfuly.",
         data: null
     });
-})
+});
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const resetPassword = catchAsync(async(req: Request, res: Response, next: NextFunction) => {
+    const {newPassword, oldPassword} = req.body;
+    const decodedToken = req.user;
+
+    await AuthServices.resetPassword(oldPassword, newPassword, decodedToken as JwtPayload);
+
+    sendResposne(res, {
+        success: true,
+        statusCode: httpStatusCode.CREATED,
+        message: "Password Successfuly Changed",
+        data: null
+    });
+});
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const googleCallbackController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const redirectTo = req.query.state as string || "";
+
+    const user = req.user;
+    if(!user){
+        throw new AppError(httpStatusCode.NOT_FOUND, "User is not found.");
+    }
+
+    const tokenInfo = createUserTokens(user);
+    setAuthCookie(res, tokenInfo);
+
+    res.redirect(`${envVars.GOOGLE_CALLBACK_URL}${redirectTo}`);
+});
 
 export const AuthControllers = {
     credentialsLogin,
     getNewAccessToken,
-    logout
+    logout,
+    resetPassword,
+    googleCallbackController
 }
