@@ -2,6 +2,7 @@ import { Router } from "express";
 import userRouter from "../modules/user/user.route";
 import authRouter from "../modules/auth/auth.route";
 import tourRouter from "../modules/tour/tour.route";
+import divisionRouter from "../modules/division/division.route";
 
 const router = Router();
 interface IRoute {
@@ -20,6 +21,9 @@ const moduleRoutes: IRoute[] = [
     }, {
         path: "/tour",
         route: tourRouter
+    }, {
+        path: "/divsion",
+        route: divisionRouter
     }
 ];
 
