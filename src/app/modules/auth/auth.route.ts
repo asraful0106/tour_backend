@@ -1,13 +1,24 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { AuthControllers } from "./auth.controller";
 import passport from "passport";
+import { checkAuth } from "../../middlewares/checkAuth";
+import { Role } from "../user/user.interface";
 
 const authRouter = Router();
 
 authRouter.post("/login", AuthControllers.credentialsLogin);
+
 authRouter.post("/refresh-token", AuthControllers.getNewAccessToken);
+
 authRouter.post("/logout", AuthControllers.logout);
-authRouter.post("/reset-password", AuthControllers.resetPassword);
+
+authRouter.post("/change-password", checkAuth(...Object.values(Role)), AuthControllers.changePassword);
+
+authRouter.post("/set-password", checkAuth(...Object.values(Role)), AuthControllers.setPassword);
+
+authRouter.post("/forgot-password", AuthControllers.forgotPassword);
+
+authRouter.post("/reset-password", checkAuth(...Object.values(Role)), AuthControllers.resetPassword);
 
 // Google Auth
 authRouter.get("/google", async (req: Request, res: Response, next: NextFunction) => {

@@ -83,11 +83,11 @@ const logout = catchAsync(async (req: Request, res: Response, next: NextFunction
 });
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const resetPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+const changePassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { newPassword, oldPassword } = req.body;
-    const decodedToken = req.user;
+    const decodedToken = req.user as JwtPayload;
 
-    await AuthServices.resetPassword(oldPassword, newPassword, decodedToken as JwtPayload);
+    await AuthServices.changePassword(oldPassword, newPassword, decodedToken);
 
     sendResposne(res, {
         success: true,
@@ -112,10 +112,57 @@ const googleCallbackController = catchAsync(async (req: Request, res: Response, 
     res.redirect(`${envVars.GOOGLE_CALLBACK_URL}${redirectTo}`);
 });
 
+// Set Password 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const setPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const decodedToken = req.user as JwtPayload;
+    const {password} = req.body;
+
+    await AuthServices.resetPassword(decodedToken.userId, password);
+
+    sendResposne(res, {
+        success: true,
+        statusCode: httpStatusCode.OK,
+        message: "Password Changed Successfully!",
+        data: null
+    });
+});
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const forgotPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const {email} = req.body;
+
+    await AuthServices.forgotPassword(email);
+
+    sendResposne(res, {
+        success: true,
+        statusCode: httpStatusCode.OK,
+        message: "Email Sent Successfully.",
+        data: null
+    });
+});
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const resetPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const decodedToken = req.user as JwtPayload;
+
+    await AuthServices.resetPassword(req.body, decodedToken);
+
+    sendResposne(res, {
+        success: true,
+        statusCode: httpStatusCode.OK,
+        message: "Password Changed Successfully",
+        data: null
+    });
+})
+
 export const AuthControllers = {
     credentialsLogin,
     getNewAccessToken,
     logout,
+    changePassword,
+    setPassword,
+    forgotPassword,
     resetPassword,
     googleCallbackController
 }
