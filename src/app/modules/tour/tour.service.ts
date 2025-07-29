@@ -36,10 +36,26 @@ const getAllTours = async (query: Record<string, string>) => {
 const updateTour = async (id: string, payload: Partial<ITour>) => {
     const existingTour = await Tour.findById(id);
     if (!existingTour) {
-        throw new Error("Tour is not found!");
+        throw new AppError(400, "Tour is not found!");
+    }
+
+    // cheking is there are existing images
+    if(payload.images && payload.images.length > 0 && existingTour.images && existingTour.images.length > 0){
+        payload.images = [...payload.images, ...existingTour.images];
+    }
+
+    if(payload.deletedImages && payload.deletedImages.length > 0 && existingTour.images && existingTour.images.length > 0){
+        const restDbImages = existingTour.images.filter(imageUrl => !payload.deletedImages?.includes(imageUrl));
+        
+        const updatedPayloadImages = (payload.images || [])
+        .filter(imageUrl => !payload.deletedImages?.includes(imageUrl))
+        .filter(imageUrl => !restDbImages.includes(imageUrl));
+
+        payload.images = [...restDbImages, ...updatedPayloadImages];
     }
 
     const updatedTour = await Tour.findByIdAndUpdate(id, payload, { new: true });
+    
     return updatedTour;
 }
 
@@ -70,6 +86,7 @@ const updateTourType = async (id: string, paylod: ITourType) => {
     if (!existingTourType) {
         throw new Error("Tour type is not found!");
     }
+
     const updatedTourType = await TourType.findByIdAndUpdate(id, paylod, { new: true });
     return updatedTourType;
 }

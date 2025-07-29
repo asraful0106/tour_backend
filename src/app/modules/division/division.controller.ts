@@ -2,10 +2,16 @@ import { NextFunction, Request, Response } from "express";
 import { catchAsync } from "../../util/catchAsync";
 import { DivisionServices } from "./division.service";
 import { sendResposne } from "../../util/sendResponse";
+import { IDivision } from "./division.interface";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const createDivision = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const result = await DivisionServices.createDivision(req.body);
+    const payload: IDivision = {
+        ...req.body,
+        thumbnail: req.file?.path
+    }
+
+    const result = await DivisionServices.createDivision(payload);
     sendResposne(res, {
         statusCode: 201, 
         success: true,
@@ -38,7 +44,12 @@ const getSingleDivision = catchAsync(async (req: Request, res: Response, next: N
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const updateDivision = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const result = await DivisionServices.updateDivision(req.params.id, req.body);
+    const paylod: IDivision = {
+        ...req.body,
+        thumbnail: req.file?.path
+    }
+    
+    const result = await DivisionServices.updateDivision(req.params.id, paylod);
     sendResposne(res, {
         statusCode: 201,
         success: true,

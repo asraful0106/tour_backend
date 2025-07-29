@@ -15,6 +15,7 @@ const tourSchema = new Schema<ITour>({
     slug: { type: String, required: true, unique: true },
     description: { type: String },
     images: { type: [String], default: [] },
+    deletedImages: {type: [String], default: []},
     location: { type: [String], default: [] },
     costFrom: { type: Number },
     stratDate: { type: Date },

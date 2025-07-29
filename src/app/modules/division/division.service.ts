@@ -1,3 +1,4 @@
+import { deleteImageFromCloudinary } from "../../config/cloudinary.congig";
 import AppError from "../../errorHelpers/AppError";
 import { IDivision } from "./division.interface";
 import { Division } from "./division.model";
@@ -34,7 +35,21 @@ const updateDivision = async (id: string, paylod: Partial<IDivision>) => {
     if (!existngDivision) {
         throw new AppError(400, "Division is not found!");
     }
+
+    const duplicateDivision = await Division.findOne({
+        name: paylod.name,
+        _id: {$ne: id}
+    });
+    if(duplicateDivision){
+        throw new AppError(400, "A division with this name already exists.");
+    }
+
     const updatedDivision = await Division.findByIdAndUpdate(id, paylod, { new: true, runValidators: true });
+
+    if(paylod.thumbnail && existngDivision.thumbnail){
+        await deleteImageFromCloudinary(existngDivision.thumbnail);
+    }
+    
     return updatedDivision;
 }
 

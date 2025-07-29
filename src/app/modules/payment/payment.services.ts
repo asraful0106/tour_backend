@@ -36,7 +36,7 @@ const initPayment = async (bookingId: string) => {
 };
 
 
-const successPayment = async (query: Record<string, string>){
+const successPayment = async (query: Record<string, string>) => {
     const session = await Booking.startSession();
     session.startTransaction();
     try {
@@ -66,7 +66,7 @@ const successPayment = async (query: Record<string, string>){
 }
 
 
-const faildPayment = async (query: Record<string, string>){
+const faildPayment = async (query: Record<string, string>) => {
     const session = await Booking.startSession();
     session.startTransaction();
     try {
@@ -96,7 +96,7 @@ const faildPayment = async (query: Record<string, string>){
 }
 
 
-const cancelPayment = async (query: Record<string, string>){
+const cancelPayment = async (query: Record<string, string>) => {
     const session = await Booking.startSession();
     session.startTransaction();
     try {

@@ -2,10 +2,15 @@ import { NextFunction, Request, Response } from "express";
 import { catchAsync } from "../../util/catchAsync";
 import { TourServices } from "./tour.service";
 import { sendResposne } from "../../util/sendResponse";
+import { ITour } from "./tour.interface";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const createTour = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const result = await TourServices.creatTour(req.body);
+    const payload: ITour = {
+        ...req.body,
+        images: (req.files as Express.Multer.File[]).map(file => file.path)
+    }
+    const result = await TourServices.creatTour(payload);
     sendResposne(res, {
         statusCode: 201,
         success: true,
@@ -30,7 +35,11 @@ const getAllTours = catchAsync(async (req: Request, res: Response, next: NextFun
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const updateTour = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const result = await TourServices.updateTour(req.params.id, req.body);
+    const payload : ITour = {
+        ...req.body,
+        images: (req.files as Express.Multer.File[]).map(file => file.path)
+    }
+    const result = await TourServices.updateTour(req.params.id, payload);
     sendResposne(res, {
         statusCode: 201,
         success: true,
