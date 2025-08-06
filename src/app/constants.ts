@@ -1,0 +1,1 @@
+export const excludedField = ["searchTearm", "sort", "fields", "page", "limit"];
